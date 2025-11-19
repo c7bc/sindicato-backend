@@ -7,9 +7,9 @@ import './index.scss'
 
 const SuccessMessage: React.FC = () => (
   <div>
-    Database seeded! You can now{' '}
+    Banco de dados populado! Agora você pode{' '}
     <a target="_blank" href="/">
-      visit your website
+      visitar seu site
     </a>
   </div>
 )
@@ -24,15 +24,15 @@ export const SeedButton: React.FC = () => {
       e.preventDefault()
 
       if (seeded) {
-        toast.info('Database already seeded.')
+        toast.info('Banco de dados já foi populado.')
         return
       }
       if (loading) {
-        toast.info('Seeding already in progress.')
+        toast.info('Populando banco de dados...')
         return
       }
       if (error) {
-        toast.error(`An error occurred, please refresh and try again.`)
+        toast.error(`Ocorreu um erro, atualize a página e tente novamente.`)
         return
       }
 
@@ -48,7 +48,7 @@ export const SeedButton: React.FC = () => {
                     resolve(true)
                     setSeeded(true)
                   } else {
-                    reject('An error occurred while seeding.')
+                    reject('Ocorreu um erro ao popular o banco.')
                   }
                 })
                 .catch((error) => {
@@ -59,9 +59,9 @@ export const SeedButton: React.FC = () => {
             }
           }),
           {
-            loading: 'Seeding with data....',
+            loading: 'Populando com dados....',
             success: <SuccessMessage />,
-            error: 'An error occurred while seeding.',
+            error: 'Ocorreu um erro ao popular o banco.',
           },
         )
       } catch (err) {
@@ -73,14 +73,14 @@ export const SeedButton: React.FC = () => {
   )
 
   let message = ''
-  if (loading) message = ' (seeding...)'
-  if (seeded) message = ' (done!)'
-  if (error) message = ` (error: ${error})`
+  if (loading) message = ' (populando...)'
+  if (seeded) message = ' (pronto!)'
+  if (error) message = ` (erro: ${error})`
 
   return (
     <Fragment>
       <button className="seedButton" onClick={handleClick}>
-        Seed your database
+        Popular banco de dados
       </button>
       {message}
     </Fragment>

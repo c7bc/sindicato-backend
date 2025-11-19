@@ -21,23 +21,23 @@ export const searchFields: Field[] = [
       {
         type: 'text',
         name: 'title',
-        label: 'Title',
+        label: 'Título',
       },
       {
         type: 'text',
         name: 'description',
-        label: 'Description',
+        label: 'Descrição',
       },
       {
         name: 'image',
-        label: 'Image',
+        label: 'Imagem',
         type: 'upload',
         relationTo: 'media',
       },
     ],
   },
   {
-    label: 'Categories',
+    label: 'Categorias',
     name: 'categories',
     type: 'array',
     admin: {

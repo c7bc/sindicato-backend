@@ -10,25 +10,25 @@ const BeforeDashboard: React.FC = () => {
   return (
     <div className={baseClass}>
       <Banner className={`${baseClass}__banner`} type="success">
-        <h4>Welcome to your dashboard!</h4>
+        <h4>Bem-vindo ao seu painel!</h4>
       </Banner>
-      Here&apos;s what to do next:
+      O que fazer agora:
       <ul className={`${baseClass}__instructions`}>
         <li>
           <SeedButton />
-          {' with a few pages, posts, and projects to jump-start your new site, then '}
+          {' com alguns posts para começar seu novo site, depois '}
           <a href="/" target="_blank">
-            visit your website
+            visite seu site
           </a>
-          {' to see the results.'}
+          {' para ver os resultados.'}
         </li>
         <li>
-          If you created this repo using Payload Cloud, head over to GitHub and clone it to your
-          local machine. It will be under the <i>GitHub Scope</i> that you selected when creating
-          this project.
+          Se você criou este repositório usando Payload Cloud, vá ao GitHub e clone-o para sua
+          máquina local. Ele estará no <i>GitHub Scope</i> que você selecionou ao criar este
+          projeto.
         </li>
         <li>
-          {'Modify your '}
+          {'Modifique suas '}
           <a
             href="https://payloadcms.com/docs/configuration/collections"
             rel="noopener noreferrer"
@@ -36,37 +36,37 @@ const BeforeDashboard: React.FC = () => {
           >
             collections
           </a>
-          {' and add more '}
+          {' e adicione mais '}
           <a
             href="https://payloadcms.com/docs/fields/overview"
             rel="noopener noreferrer"
             target="_blank"
           >
-            fields
+            campos
           </a>
-          {' as needed. If you are new to Payload, we also recommend you check out the '}
+          {' conforme necessário. Se você é novo no Payload, recomendamos conferir a '}
           <a
             href="https://payloadcms.com/docs/getting-started/what-is-payload"
             rel="noopener noreferrer"
             target="_blank"
           >
-            Getting Started
+            documentação inicial
           </a>
-          {' docs.'}
+          {'.'}
         </li>
         <li>
-          Commit and push your changes to the repository to trigger a redeployment of your project.
+          Faça commit e push das suas alterações para acionar um novo deploy do projeto.
         </li>
       </ul>
-      {'Pro Tip: This block is a '}
+      {'Dica: Este bloco é um '}
       <a
         href="https://payloadcms.com/docs/custom-components/overview"
         rel="noopener noreferrer"
         target="_blank"
       >
-        custom component
+        componente customizado
       </a>
-      , you can remove it at any time by updating your <strong>payload.config</strong>.
+      , você pode removê-lo a qualquer momento atualizando seu <strong>payload.config</strong>.
     </div>
   )
 }

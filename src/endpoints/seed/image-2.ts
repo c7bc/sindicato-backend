@@ -1,7 +1,7 @@
 import type { Media } from '@/payload-types'
 
 export const image2: Omit<Media, 'createdAt' | 'id' | 'updatedAt'> = {
-  alt: 'Curving abstract shapes with an orange and blue gradient',
+  alt: 'Formas abstratas curvas com gradiente laranja e azul',
   caption: {
     root: {
       type: 'root',
@@ -15,7 +15,7 @@ export const image2: Omit<Media, 'createdAt' | 'id' | 'updatedAt'> = {
               format: 0,
               mode: 'normal',
               style: '',
-              text: 'Photo by ',
+              text: 'Foto por ',
               version: 1,
             },
             {
@@ -47,7 +47,7 @@ export const image2: Omit<Media, 'createdAt' | 'id' | 'updatedAt'> = {
               format: 0,
               mode: 'normal',
               style: '',
-              text: ' on Unsplash.',
+              text: ' no Unsplash.',
               version: 1,
             },
           ],

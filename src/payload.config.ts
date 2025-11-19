@@ -1,18 +1,25 @@
 import { vercelBlobStorage } from '@payloadcms/storage-vercel-blob'
 import { vercelPostgresAdapter } from '@payloadcms/db-vercel-postgres'
+import { pt } from '@payloadcms/translations/languages/pt'
 
 import sharp from 'sharp' // sharp-import
 import path from 'path'
 import { buildConfig, PayloadRequest } from 'payload'
 import { fileURLToPath } from 'url'
 
+import { AnnouncementCards } from './collections/AnnouncementCards'
 import { Categories } from './collections/Categories'
+import { ContactSubmissions } from './collections/ContactSubmissions'
+import { CTASections } from './collections/CTASections'
+import { JuridicoPage } from './collections/JuridicoPage'
 import { Media } from './collections/Media'
-import { Pages } from './collections/Pages'
+import { NewsletterSubmissions } from './collections/NewsletterSubmissions'
 import { Posts } from './collections/Posts'
+import { ServicosPage } from './collections/ServicosPage'
+import { SindicalizeSubmissions } from './collections/SindicalizeSubmissions'
+import { SindicatoPage } from './collections/SindicatoPage'
+import { Sites } from './collections/Sites'
 import { Users } from './collections/Users'
-import { Footer } from './Footer/config'
-import { Header } from './Header/config'
 import { plugins } from './plugins'
 import { defaultLexical } from '@/fields/defaultLexical'
 import { getServerSideURL } from './utilities/getURL'
@@ -37,7 +44,7 @@ export default buildConfig({
     livePreview: {
       breakpoints: [
         {
-          label: 'Mobile',
+          label: 'Celular',
           name: 'mobile',
           width: 375,
           height: 667,
@@ -49,12 +56,19 @@ export default buildConfig({
           height: 1024,
         },
         {
-          label: 'Desktop',
+          label: 'Computador',
           name: 'desktop',
           width: 1440,
           height: 900,
         },
       ],
+    },
+  },
+  // Configuração de internacionalização para português brasileiro
+  i18n: {
+    fallbackLanguage: 'pt',
+    supportedLanguages: {
+      pt,
     },
   },
   // This config helps us configure global or default features that the other editors can inherit
@@ -63,10 +77,25 @@ export default buildConfig({
     pool: {
       connectionString: process.env.POSTGRES_URL || '',
     },
+    push: false, // Desabilitado - usar migrations
   }),
-  collections: [Pages, Posts, Media, Categories, Users],
+  collections: [
+    Sites,
+    Posts,
+    Media,
+    Categories,
+    Users,
+    ContactSubmissions,
+    NewsletterSubmissions,
+    SindicalizeSubmissions,
+    SindicatoPage,
+    JuridicoPage,
+    ServicosPage,
+    CTASections,
+    AnnouncementCards,
+  ],
   cors: [getServerSideURL()].filter(Boolean),
-  globals: [Header, Footer],
+  globals: [],
   plugins: [
     ...plugins,
     vercelBlobStorage({

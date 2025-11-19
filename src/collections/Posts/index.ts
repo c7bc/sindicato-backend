@@ -1,7 +1,6 @@
 import type { CollectionConfig } from 'payload'
 
 import {
-  BlocksFeature,
   FixedToolbarFeature,
   HeadingFeature,
   HorizontalRuleFeature,
@@ -11,12 +10,13 @@ import {
 
 import { authenticated } from '../../access/authenticated'
 import { authenticatedOrPublished } from '../../access/authenticatedOrPublished'
-import { Banner } from '../../blocks/Banner/config'
-import { Code } from '../../blocks/Code/config'
-import { MediaBlock } from '../../blocks/MediaBlock/config'
 import { generatePreviewPath } from '../../utilities/generatePreviewPath'
 import { populateAuthors } from './hooks/populateAuthors'
 import { revalidateDelete, revalidatePost } from './hooks/revalidatePost'
+import {
+  revalidateCacheAfterChange,
+  revalidateCacheAfterDelete,
+} from '../../hooks/revalidateCache'
 
 import {
   MetaDescriptionField,
@@ -25,10 +25,13 @@ import {
   OverviewField,
   PreviewField,
 } from '@payloadcms/plugin-seo/fields'
-import { slugField } from 'payload'
 
 export const Posts: CollectionConfig<'posts'> = {
   slug: 'posts',
+  labels: {
+    singular: 'Notícia',
+    plural: 'Notícias',
+  },
   access: {
     create: authenticated,
     delete: authenticated,
@@ -42,6 +45,7 @@ export const Posts: CollectionConfig<'posts'> = {
     title: true,
     slug: true,
     categories: true,
+    sites: true,
     meta: {
       image: true,
       description: true,
@@ -68,6 +72,7 @@ export const Posts: CollectionConfig<'posts'> = {
   fields: [
     {
       name: 'title',
+      label: 'Título',
       type: 'text',
       required: true,
     },
@@ -78,6 +83,7 @@ export const Posts: CollectionConfig<'posts'> = {
           fields: [
             {
               name: 'heroImage',
+              label: 'Imagem de Destaque',
               type: 'upload',
               relationTo: 'media',
             },
@@ -89,7 +95,6 @@ export const Posts: CollectionConfig<'posts'> = {
                   return [
                     ...rootFeatures,
                     HeadingFeature({ enabledHeadingSizes: ['h1', 'h2', 'h3', 'h4'] }),
-                    BlocksFeature({ blocks: [Banner, Code, MediaBlock] }),
                     FixedToolbarFeature(),
                     InlineToolbarFeature(),
                     HorizontalRuleFeature(),
@@ -100,28 +105,24 @@ export const Posts: CollectionConfig<'posts'> = {
               required: true,
             },
           ],
-          label: 'Content',
+          label: 'Conteúdo',
         },
         {
           fields: [
             {
-              name: 'relatedPosts',
+              name: 'sites',
+              label: 'Sites',
               type: 'relationship',
               admin: {
                 position: 'sidebar',
               },
-              filterOptions: ({ id }) => {
-                return {
-                  id: {
-                    not_in: [id],
-                  },
-                }
-              },
               hasMany: true,
-              relationTo: 'posts',
+              relationTo: 'sites',
+              required: true,
             },
             {
               name: 'categories',
+              label: 'Categorias',
               type: 'relationship',
               admin: {
                 position: 'sidebar',
@@ -130,7 +131,7 @@ export const Posts: CollectionConfig<'posts'> = {
               relationTo: 'categories',
             },
           ],
-          label: 'Meta',
+          label: 'Informações',
         },
         {
           name: 'meta',
@@ -143,12 +144,22 @@ export const Posts: CollectionConfig<'posts'> = {
             }),
             MetaTitleField({
               hasGenerateFn: true,
+              overrides: {
+                label: 'Título SEO',
+              },
             }),
             MetaImageField({
               relationTo: 'media',
+              overrides: {
+                label: 'Imagem SEO',
+              },
             }),
 
-            MetaDescriptionField({}),
+            MetaDescriptionField({
+              overrides: {
+                label: 'Descrição SEO',
+              },
+            }),
             PreviewField({
               // if the `generateUrl` function is configured
               hasGenerateFn: true,
@@ -163,6 +174,7 @@ export const Posts: CollectionConfig<'posts'> = {
     },
     {
       name: 'publishedAt',
+      label: 'Publicado Em',
       type: 'date',
       admin: {
         date: {
@@ -183,6 +195,7 @@ export const Posts: CollectionConfig<'posts'> = {
     },
     {
       name: 'authors',
+      label: 'Autores',
       type: 'relationship',
       admin: {
         position: 'sidebar',
@@ -214,12 +227,37 @@ export const Posts: CollectionConfig<'posts'> = {
         },
       ],
     },
-    slugField(),
+    {
+      name: 'slug',
+      label: 'Slug',
+      type: 'text',
+      index: true,
+      admin: {
+        description: 'URL amigável gerada automaticamente',
+      },
+      hooks: {
+        beforeValidate: [
+          ({ data, operation, originalDoc }) => {
+            if (operation === 'create' || !originalDoc?.slug) {
+              if (data?.title) {
+                return data.title
+                  .toLowerCase()
+                  .normalize('NFD')
+                  .replace(/[\u0300-\u036f]/g, '')
+                  .replace(/[^a-z0-9]+/g, '-')
+                  .replace(/(^-|-$)/g, '')
+              }
+            }
+            return undefined
+          },
+        ],
+      },
+    },
   ],
   hooks: {
-    afterChange: [revalidatePost],
+    afterChange: [revalidatePost, revalidateCacheAfterChange],
     afterRead: [populateAuthors],
-    afterDelete: [revalidateDelete],
+    afterDelete: [revalidateDelete, revalidateCacheAfterDelete],
   },
   versions: {
     drafts: {

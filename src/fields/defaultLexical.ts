@@ -16,7 +16,7 @@ export const defaultLexical = lexicalEditor({
     BoldFeature(),
     ItalicFeature(),
     LinkFeature({
-      enabledCollections: ['pages', 'posts'],
+      enabledCollections: ['posts'],
       fields: ({ defaultFields }) => {
         const defaultFieldsWithoutUrl = defaultFields.filter((field) => {
           if ('name' in field && field.name === 'url') return false
@@ -37,7 +37,7 @@ export const defaultLexical = lexicalEditor({
               if ((options?.siblingData as LinkFields)?.linkType === 'internal') {
                 return true // no validation needed, as no url should exist for internal links
               }
-              return value ? true : 'URL is required'
+              return value ? true : 'URL é obrigatória'
             }) as TextFieldSingleValidation,
           },
         ]
