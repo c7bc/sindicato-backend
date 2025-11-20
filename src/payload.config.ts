@@ -94,7 +94,13 @@ export default buildConfig({
     CTASections,
     AnnouncementCards,
   ],
-  cors: [getServerSideURL()].filter(Boolean),
+  cors: [
+    getServerSideURL(),
+    'http://localhost:3001',
+    'http://localhost:3002',
+    'http://localhost:5173',
+    process.env.NEXT_PUBLIC_FRONTEND_URL,
+  ].filter((url): url is string => Boolean(url)),
   globals: [],
   plugins: [
     ...plugins,

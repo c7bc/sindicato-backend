@@ -11,11 +11,15 @@ async function triggerRevalidation({
   siteId,
   collection,
   operation,
+  docId,
+  slug,
 }: {
   payload: Payload
   siteId: string | number
   collection: string
   operation: 'create' | 'update' | 'delete'
+  docId?: string | number
+  slug?: string
 }) {
   try {
     const site = (await payload.findByID({
@@ -38,6 +42,8 @@ async function triggerRevalidation({
         operation,
         siteId,
         timestamp: new Date().toISOString(),
+        ...(docId && { id: docId }),
+        ...(slug && { slug }),
       }),
     })
 
@@ -69,6 +75,8 @@ export const revalidateCacheAfterChange: CollectionAfterChangeHook = async ({
         siteId: doc.id,
         collection: 'sites',
         operation,
+        docId: doc.id,
+        slug: doc.slug,
       })
     }
     return doc
@@ -84,6 +92,8 @@ export const revalidateCacheAfterChange: CollectionAfterChangeHook = async ({
           siteId,
           collection: collection.slug,
           operation,
+          docId: doc.id,
+          slug: doc.slug,
         })
       }
     }
@@ -99,6 +109,8 @@ export const revalidateCacheAfterChange: CollectionAfterChangeHook = async ({
       siteId,
       collection: collection.slug,
       operation,
+      docId: doc.id,
+      slug: doc.slug,
     })
   }
 
@@ -120,6 +132,8 @@ export const revalidateCacheAfterDelete: CollectionAfterDeleteHook = async ({
         siteId: doc.id,
         collection: 'sites',
         operation: 'delete',
+        docId: doc.id,
+        slug: doc.slug,
       })
     }
     return doc
@@ -135,6 +149,8 @@ export const revalidateCacheAfterDelete: CollectionAfterDeleteHook = async ({
           siteId,
           collection: collection.slug,
           operation: 'delete',
+          docId: doc.id,
+          slug: doc.slug,
         })
       }
     }
@@ -150,6 +166,8 @@ export const revalidateCacheAfterDelete: CollectionAfterDeleteHook = async ({
       siteId,
       collection: collection.slug,
       operation: 'delete',
+      docId: doc.id,
+      slug: doc.slug,
     })
   }
 

@@ -463,7 +463,10 @@ export interface SindicalizeSubmission {
   dataNascimento: string;
   empresaVeiculo: string;
   cargoFuncao: string;
-  assinaturaDigital: number | Media;
+  /**
+   * Imagem da assinatura em base64
+   */
+  assinaturaDigital: string;
   declaracaoLida: boolean;
   site: number | Site;
   updatedAt: string;

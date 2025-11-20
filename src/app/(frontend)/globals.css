@@ -2,6 +2,50 @@
 @tailwind components;
 @tailwind utilities;
 
+/* Custom colors for Sindicato preview */
+:root {
+  --brand-600: #1379C3;
+  --brand-solid: #1379C3;
+  --brand-solid-hover: #0f6ab0;
+  --brand-section: #1379C3;
+  --brand-alt: rgba(255, 255, 255, 0.2);
+  --utility-brand-50: #eff6ff;
+  --utility-brand-200: #bfdbfe;
+}
+
+@layer utilities {
+  /* Text colors */
+  .text-brand-600 { color: var(--brand-600); }
+  .text-tertiary { color: #475467; }
+  .text-quaternary { color: #98a2b3; }
+
+  /* Background colors */
+  .bg-brand-solid { background-color: var(--brand-solid); }
+  .bg-brand-solid_hover:hover { background-color: var(--brand-solid-hover); }
+  .bg-brand-section { background-color: var(--brand-section); }
+  .bg-utility-brand-50 { background-color: var(--utility-brand-50); }
+
+  /* Ring colors */
+  .ring-utility-brand-200 { --tw-ring-color: var(--utility-brand-200); }
+
+  /* Display text sizes */
+  .text-display-sm { font-size: 1.875rem; line-height: 2.375rem; }
+  .text-display-md { font-size: 2.25rem; line-height: 2.75rem; }
+  .text-display-lg { font-size: 3rem; line-height: 3.75rem; }
+
+  /* Custom heights */
+  .h-50 { height: 12.5rem; }
+  .h-60 { height: 15rem; }
+  .h-70 { height: 17.5rem; }
+  .h-95 { height: 23.75rem; }
+  .h-120 { height: 30rem; }
+  .h-148 { height: 37rem; }
+  .h-160 { height: 40rem; }
+
+  /* Border colors */
+  .border-brand_alt { border-color: var(--brand-alt); }
+}
+
 @layer base {
   h1,
   h2,

@@ -81,9 +81,14 @@ export const SindicalizeSubmissions: CollectionConfig = {
     {
       name: 'assinaturaDigital',
       label: 'Assinatura Digital',
-      type: 'upload',
-      relationTo: 'media',
+      type: 'text',
       required: true,
+      admin: {
+        description: 'Imagem da assinatura em base64',
+        components: {
+          Field: '@/components/admin/Base64ImageField',
+        },
+      },
     },
     {
       name: 'declaracaoLida',

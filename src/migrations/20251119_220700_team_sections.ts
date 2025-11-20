@@ -1,6 +1,6 @@
 import { MigrateUpArgs, MigrateDownArgs, sql } from '@payloadcms/db-vercel-postgres'
 
-export async function up({ db, payload, req }: MigrateUpArgs): Promise<void> {
+export async function up({ db }: MigrateUpArgs): Promise<void> {
   // Criar nova tabela para teamSections
   await db.execute(sql`
     CREATE TABLE IF NOT EXISTS "sindicato_page_team_sections" (
@@ -51,7 +51,7 @@ export async function up({ db, payload, req }: MigrateUpArgs): Promise<void> {
   `)
 }
 
-export async function down({ db, payload, req }: MigrateDownArgs): Promise<void> {
+export async function down({ db }: MigrateDownArgs): Promise<void> {
   // Restaurar colunas antigas
   await db.execute(sql`
     ALTER TABLE "sindicato_page" ADD COLUMN IF NOT EXISTS "diretoria_executiva_badge" varchar;
