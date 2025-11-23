@@ -127,6 +127,15 @@ export const SindicatoPage: CollectionConfig = {
               },
               fields: [
                 {
+                  name: 'id',
+                  label: 'ID (slug único)',
+                  type: 'text',
+                  required: true,
+                  admin: {
+                    placeholder: 'Ex: diretoria-executiva',
+                  },
+                },
+                {
                   name: 'title',
                   label: 'Título da Seção',
                   type: 'text',
@@ -152,6 +161,15 @@ export const SindicatoPage: CollectionConfig = {
                   label: 'Membros',
                   type: 'array',
                   fields: [
+                    {
+                      name: 'id',
+                      label: 'ID (slug único)',
+                      type: 'text',
+                      required: true,
+                      admin: {
+                        placeholder: 'Ex: joao-silva',
+                      },
+                    },
                     {
                       name: 'name',
                       label: 'Nome',

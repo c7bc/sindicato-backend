@@ -516,19 +516,19 @@ export interface SindicatoPage {
    */
   teamSections?:
     | {
+        id: string;
         title: string;
         badge?: string | null;
         description?: string | null;
         members?:
           | {
+              id: string;
               name: string;
               role: string;
               image?: (number | null) | Media;
               imageAlt?: string | null;
-              id?: string | null;
             }[]
           | null;
-        id?: string | null;
       }[]
     | null;
   /**
@@ -1271,19 +1271,19 @@ export interface SindicatoPageSelect<T extends boolean = true> {
   teamSections?:
     | T
     | {
+        id?: T;
         title?: T;
         badge?: T;
         description?: T;
         members?:
           | T
           | {
+              id?: T;
               name?: T;
               role?: T;
               image?: T;
               imageAlt?: T;
-              id?: T;
             };
-        id?: T;
       };
   site?: T;
   updatedAt?: T;
