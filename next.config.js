@@ -32,12 +32,14 @@ const nextConfig = {
   reactStrictMode: true,
   redirects,
   async rewrites() {
-    return [
-      {
-        source: '/api/media/file/:path*',
-        destination: 'https://t5nhsatjphczs4ej.public.blob.vercel-storage.com/media/:path*',
-      },
-    ]
+    return {
+      beforeFiles: [
+        {
+          source: '/api/media/file/:path*',
+          destination: 'https://t5nhsatjphczs4ej.public.blob.vercel-storage.com/media/:path*',
+        },
+      ],
+    }
   },
 }
 
