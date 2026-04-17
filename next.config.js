@@ -35,7 +35,7 @@ const nextConfig = {
     return [
       {
         source: '/api/media/file/:path*',
-        destination: '/media/:path*',
+        destination: 'https://t5nhsatjphczs4ej.public.blob.vercel-storage.com/media/:path*',
       },
     ]
   },
