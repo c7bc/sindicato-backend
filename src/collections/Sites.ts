@@ -228,8 +228,29 @@ export const Sites: CollectionConfig = {
           label: 'Banner (Home)',
           fields: [
             {
+              name: 'slides',
+              label: 'Slides do Carrossel',
+              type: 'array',
+              maxRows: 10,
+              admin: {
+                description: 'Imagens do carrossel da homepage. Se vazio, o hero estático será exibido.',
+              },
+              fields: [
+                {
+                  name: 'image',
+                  label: 'Imagem do Banner',
+                  type: 'upload',
+                  relationTo: 'media',
+                  required: true,
+                },
+              ],
+            },
+            {
               name: 'hero',
               type: 'group',
+              admin: {
+                description: 'Hero estático (fallback caso o carrossel esteja vazio)',
+              },
               fields: [
                 {
                   name: 'title',

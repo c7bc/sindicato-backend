@@ -206,6 +206,18 @@ export interface Site {
       youtube?: string | null;
     };
   };
+  /**
+   * Imagens do carrossel da homepage. Se vazio, o hero estático será exibido.
+   */
+  slides?:
+    | {
+        image: number | Media;
+        id?: string | null;
+      }[]
+    | null;
+  /**
+   * Hero estático (fallback caso o carrossel esteja vazio)
+   */
   hero?: {
     title?: string | null;
     description?: string | null;
@@ -1018,6 +1030,12 @@ export interface SitesSelect<T extends boolean = true> {
               twitter?: T;
               youtube?: T;
             };
+      };
+  slides?:
+    | T
+    | {
+        image?: T;
+        id?: T;
       };
   hero?:
     | T
