@@ -44,6 +44,9 @@ importers:
       '@payloadcms/storage-vercel-blob':
         specifier: 3.59.1
         version: 3.59.1(@types/react@19.1.8)(monaco-editor@0.55.1)(next@15.5.15(@babel/core@7.29.0)(@playwright/test@1.54.1)(react-dom@19.1.0(react@19.1.0))(react@19.1.0)(sass@1.77.4))(payload@3.59.1(bufferutil@4.1.0)(graphql@16.13.2)(typescript@5.7.3)(utf-8-validate@6.0.6))(react-dom@19.1.0(react@19.1.0))(react@19.1.0)(typescript@5.7.3)
+      '@payloadcms/translations':
+        specifier: 3.59.1
+        version: 3.59.1
       '@payloadcms/ui':
         specifier: 3.59.1
         version: 3.59.1(@types/react@19.1.8)(monaco-editor@0.55.1)(next@15.5.15(@babel/core@7.29.0)(@playwright/test@1.54.1)(react-dom@19.1.0(react@19.1.0))(react@19.1.0)(sass@1.77.4))(payload@3.59.1(bufferutil@4.1.0)(graphql@16.13.2)(typescript@5.7.3)(utf-8-validate@6.0.6))(react-dom@19.1.0(react@19.1.0))(react@19.1.0)(typescript@5.7.3)
