@@ -6,6 +6,7 @@ import * as migration_20251120_000300_assinatura_digital_text from './20251120_0
 import * as migration_20260416_120000_carousel_slides from './20260416_120000_carousel_slides';
 import * as migration_20260418_100000_sindicalize_uploads from './20260418_100000_sindicalize_uploads';
 import * as migration_20260418_110000_acts_ccts from './20260418_110000_acts_ccts';
+import * as migration_20260420_120000_denuncias from './20260420_120000_denuncias';
 
 export const migrations = [
   {
@@ -47,5 +48,10 @@ export const migrations = [
     up: migration_20260418_110000_acts_ccts.up,
     down: migration_20260418_110000_acts_ccts.down,
     name: '20260418_110000_acts_ccts',
+  },
+  {
+    up: migration_20260420_120000_denuncias.up,
+    down: migration_20260420_120000_denuncias.down,
+    name: '20260420_120000_denuncias',
   },
 ];

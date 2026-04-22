@@ -81,6 +81,7 @@ export interface Config {
     'cta-sections': CtaSection;
     'announcement-cards': AnnouncementCard;
     'acts-ccts': ActsCct;
+    denuncias: Denuncia;
     redirects: Redirect;
     search: Search;
     'payload-jobs': PayloadJob;
@@ -104,6 +105,7 @@ export interface Config {
     'cta-sections': CtaSectionsSelect<false> | CtaSectionsSelect<true>;
     'announcement-cards': AnnouncementCardsSelect<false> | AnnouncementCardsSelect<true>;
     'acts-ccts': ActsCctsSelect<false> | ActsCctsSelect<true>;
+    denuncias: DenunciasSelect<false> | DenunciasSelect<true>;
     redirects: RedirectsSelect<false> | RedirectsSelect<true>;
     search: SearchSelect<false> | SearchSelect<true>;
     'payload-jobs': PayloadJobsSelect<false> | PayloadJobsSelect<true>;
@@ -761,6 +763,33 @@ export interface ActsCct {
 }
 /**
  * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "denuncias".
+ */
+export interface Denuncia {
+  id: number;
+  /**
+   * Gerado automaticamente no envio.
+   */
+  protocolo: string;
+  categoria: 'assedio-moral' | 'assedio-sexual' | 'discriminacao' | 'irregularidade-trabalhista' | 'outra';
+  descricao: string;
+  anonimo?: boolean | null;
+  nome?: string | null;
+  email?: string | null;
+  telefone?: string | null;
+  empresa?: string | null;
+  anexo?: (number | null) | Media;
+  status: 'recebida' | 'em-analise' | 'encaminhada' | 'resolvida' | 'arquivada';
+  /**
+   * Visível apenas para administradores.
+   */
+  notaInterna?: string | null;
+  site: number | Site;
+  updatedAt: string;
+  createdAt: string;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
  * via the `definition` "redirects".
  */
 export interface Redirect {
@@ -965,6 +994,10 @@ export interface PayloadLockedDocument {
     | ({
         relationTo: 'acts-ccts';
         value: number | ActsCct;
+      } | null)
+    | ({
+        relationTo: 'denuncias';
+        value: number | Denuncia;
       } | null)
     | ({
         relationTo: 'redirects';
@@ -1512,6 +1545,26 @@ export interface ActsCctsSelect<T extends boolean = true> {
   description?: T;
   file?: T;
   publishedAt?: T;
+  site?: T;
+  updatedAt?: T;
+  createdAt?: T;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "denuncias_select".
+ */
+export interface DenunciasSelect<T extends boolean = true> {
+  protocolo?: T;
+  categoria?: T;
+  descricao?: T;
+  anonimo?: T;
+  nome?: T;
+  email?: T;
+  telefone?: T;
+  empresa?: T;
+  anexo?: T;
+  status?: T;
+  notaInterna?: T;
   site?: T;
   updatedAt?: T;
   createdAt?: T;

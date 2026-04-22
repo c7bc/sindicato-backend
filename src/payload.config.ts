@@ -10,6 +10,7 @@ import { fileURLToPath } from 'url'
 import { ActsCcts } from './collections/ActsCcts'
 import { AnnouncementCards } from './collections/AnnouncementCards'
 import { Categories } from './collections/Categories'
+import { Denuncias } from './collections/Denuncias'
 import { ContactSubmissions } from './collections/ContactSubmissions'
 import { CTASections } from './collections/CTASections'
 import { JuridicoPage } from './collections/JuridicoPage'
@@ -95,6 +96,7 @@ export default buildConfig({
     CTASections,
     AnnouncementCards,
     ActsCcts,
+    Denuncias,
   ],
   cors: [
     getServerSideURL(),
