@@ -7,6 +7,7 @@ import path from 'path'
 import { buildConfig, PayloadRequest } from 'payload'
 import { fileURLToPath } from 'url'
 
+import { ActsCcts } from './collections/ActsCcts'
 import { AnnouncementCards } from './collections/AnnouncementCards'
 import { Categories } from './collections/Categories'
 import { ContactSubmissions } from './collections/ContactSubmissions'
@@ -93,6 +94,7 @@ export default buildConfig({
     ServicosPage,
     CTASections,
     AnnouncementCards,
+    ActsCcts,
   ],
   cors: [
     getServerSideURL(),

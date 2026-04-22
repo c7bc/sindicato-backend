@@ -91,6 +91,26 @@ export const SindicalizeSubmissions: CollectionConfig = {
       },
     },
     {
+      name: 'ctpsDigital',
+      label: 'CTPS Digital',
+      type: 'upload',
+      relationTo: 'media',
+      required: false,
+      admin: {
+        description: 'Carteira de Trabalho Digital (opcional)',
+      },
+    },
+    {
+      name: 'contracheque',
+      label: 'Contracheque',
+      type: 'upload',
+      relationTo: 'media',
+      required: true,
+      admin: {
+        description: 'Contracheque recente (obrigatório)',
+      },
+    },
+    {
       name: 'declaracaoLida',
       label: 'Declaro que li e aceito os termos',
       type: 'checkbox',

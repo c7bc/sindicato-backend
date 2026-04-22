@@ -80,6 +80,7 @@ export interface Config {
     'servicos-page': ServicosPage;
     'cta-sections': CtaSection;
     'announcement-cards': AnnouncementCard;
+    'acts-ccts': ActsCct;
     redirects: Redirect;
     search: Search;
     'payload-jobs': PayloadJob;
@@ -102,6 +103,7 @@ export interface Config {
     'servicos-page': ServicosPageSelect<false> | ServicosPageSelect<true>;
     'cta-sections': CtaSectionsSelect<false> | CtaSectionsSelect<true>;
     'announcement-cards': AnnouncementCardsSelect<false> | AnnouncementCardsSelect<true>;
+    'acts-ccts': ActsCctsSelect<false> | ActsCctsSelect<true>;
     redirects: RedirectsSelect<false> | RedirectsSelect<true>;
     search: SearchSelect<false> | SearchSelect<true>;
     'payload-jobs': PayloadJobsSelect<false> | PayloadJobsSelect<true>;
@@ -479,6 +481,14 @@ export interface SindicalizeSubmission {
    * Imagem da assinatura em base64
    */
   assinaturaDigital: string;
+  /**
+   * Carteira de Trabalho Digital (opcional)
+   */
+  ctpsDigital?: (number | null) | Media;
+  /**
+   * Contracheque recente (obrigatório)
+   */
+  contracheque: number | Media;
   declaracaoLida: boolean;
   site: number | Site;
   updatedAt: string;
@@ -728,6 +738,29 @@ export interface AnnouncementCard {
 }
 /**
  * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "acts-ccts".
+ */
+export interface ActsCct {
+  id: number;
+  type: 'ACT' | 'CCT';
+  title: string;
+  year: number;
+  /**
+   * Empresa/veículo ao qual o acordo se aplica (opcional)
+   */
+  company?: string | null;
+  description?: string | null;
+  /**
+   * Documento em PDF do acordo/convenção
+   */
+  file: number | Media;
+  publishedAt?: string | null;
+  site: number | Site;
+  updatedAt: string;
+  createdAt: string;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
  * via the `definition` "redirects".
  */
 export interface Redirect {
@@ -928,6 +961,10 @@ export interface PayloadLockedDocument {
     | ({
         relationTo: 'announcement-cards';
         value: number | AnnouncementCard;
+      } | null)
+    | ({
+        relationTo: 'acts-ccts';
+        value: number | ActsCct;
       } | null)
     | ({
         relationTo: 'redirects';
@@ -1258,6 +1295,8 @@ export interface SindicalizeSubmissionsSelect<T extends boolean = true> {
   empresaVeiculo?: T;
   cargoFuncao?: T;
   assinaturaDigital?: T;
+  ctpsDigital?: T;
+  contracheque?: T;
   declaracaoLida?: T;
   site?: T;
   updatedAt?: T;
@@ -1457,6 +1496,22 @@ export interface AnnouncementCardsSelect<T extends boolean = true> {
   primaryButtonHref?: T;
   image?: T;
   imageAlt?: T;
+  site?: T;
+  updatedAt?: T;
+  createdAt?: T;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "acts-ccts_select".
+ */
+export interface ActsCctsSelect<T extends boolean = true> {
+  type?: T;
+  title?: T;
+  year?: T;
+  company?: T;
+  description?: T;
+  file?: T;
+  publishedAt?: T;
   site?: T;
   updatedAt?: T;
   createdAt?: T;

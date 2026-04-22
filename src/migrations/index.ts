@@ -4,6 +4,8 @@ import * as migration_20251119_220700_team_sections from './20251119_220700_team
 import * as migration_20251119_221000_nav_item_button from './20251119_221000_nav_item_button';
 import * as migration_20251120_000300_assinatura_digital_text from './20251120_000300_assinatura_digital_text';
 import * as migration_20260416_120000_carousel_slides from './20260416_120000_carousel_slides';
+import * as migration_20260418_100000_sindicalize_uploads from './20260418_100000_sindicalize_uploads';
+import * as migration_20260418_110000_acts_ccts from './20260418_110000_acts_ccts';
 
 export const migrations = [
   {
@@ -35,5 +37,15 @@ export const migrations = [
     up: migration_20260416_120000_carousel_slides.up,
     down: migration_20260416_120000_carousel_slides.down,
     name: '20260416_120000_carousel_slides',
+  },
+  {
+    up: migration_20260418_100000_sindicalize_uploads.up,
+    down: migration_20260418_100000_sindicalize_uploads.down,
+    name: '20260418_100000_sindicalize_uploads',
+  },
+  {
+    up: migration_20260418_110000_acts_ccts.up,
+    down: migration_20260418_110000_acts_ccts.down,
+    name: '20260418_110000_acts_ccts',
   },
 ];
