@@ -1,13 +1,17 @@
 import type { CollectionConfig } from 'payload'
 
 import {
+  BlocksFeature,
   FixedToolbarFeature,
   HeadingFeature,
   HorizontalRuleFeature,
   InlineToolbarFeature,
+  UploadFeature,
   lexicalEditor,
 } from '@payloadcms/richtext-lexical'
 
+import { PdfEmbedBlock } from '../../blocks/PdfEmbedBlock/config'
+import { YouTubeBlock } from '../../blocks/YouTubeBlock/config'
 import { authenticated } from '../../access/authenticated'
 import { authenticatedOrPublished } from '../../access/authenticatedOrPublished'
 import { generatePreviewPath } from '../../utilities/generatePreviewPath'
@@ -98,6 +102,32 @@ export const Posts: CollectionConfig<'posts'> = {
                     FixedToolbarFeature(),
                     InlineToolbarFeature(),
                     HorizontalRuleFeature(),
+                    UploadFeature({
+                      collections: {
+                        media: {
+                          fields: [
+                            {
+                              name: 'caption',
+                              label: 'Legenda',
+                              type: 'text',
+                            },
+                            {
+                              name: 'alinhamento',
+                              label: 'Alinhamento',
+                              type: 'select',
+                              defaultValue: 'centro',
+                              options: [
+                                { label: 'Esquerda', value: 'esquerda' },
+                                { label: 'Centro', value: 'centro' },
+                                { label: 'Direita', value: 'direita' },
+                                { label: 'Largura total', value: 'largura-total' },
+                              ],
+                            },
+                          ],
+                        },
+                      },
+                    }),
+                    BlocksFeature({ blocks: [YouTubeBlock, PdfEmbedBlock] }),
                   ]
                 },
               }),

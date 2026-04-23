@@ -1694,6 +1694,44 @@ export interface TaskSchedulePublish {
 }
 /**
  * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "YouTubeBlock".
+ */
+export interface YouTubeBlock {
+  /**
+   * Cole a URL inteira do YouTube. O vídeo será embutido na notícia.
+   */
+  url: string;
+  /**
+   * Texto exibido abaixo do vídeo.
+   */
+  caption?: string | null;
+  id?: string | null;
+  blockName?: string | null;
+  blockType: 'youtube';
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "PdfEmbedBlock".
+ */
+export interface PdfEmbedBlock {
+  /**
+   * Selecione um PDF da biblioteca de mídias. Ele será exibido na notícia com visualizador embutido.
+   */
+  file: number | Media;
+  /**
+   * Exibido acima do PDF como cabeçalho.
+   */
+  titulo?: string | null;
+  /**
+   * Entre 300 e 1200 pixels. Padrão 600.
+   */
+  altura?: number | null;
+  id?: string | null;
+  blockName?: string | null;
+  blockType: 'pdfEmbed';
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
  * via the `definition` "auth".
  */
 export interface Auth {
