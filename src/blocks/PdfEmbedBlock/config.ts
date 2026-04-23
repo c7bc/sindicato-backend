@@ -14,11 +14,8 @@ export const PdfEmbedBlock: Block = {
       type: 'upload',
       relationTo: 'media',
       required: true,
-      filterOptions: {
-        mimeType: { contains: 'pdf' },
-      },
       admin: {
-        description: 'Selecione um PDF da biblioteca de mídias. Ele será exibido na notícia com visualizador embutido.',
+        description: 'Selecione um PDF da biblioteca ou clique em "Criar novo" pra subir direto. O documento aparece com visualizador embutido na notícia.',
       },
     },
     {
