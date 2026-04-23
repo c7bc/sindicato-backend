@@ -7,6 +7,7 @@ import * as migration_20260416_120000_carousel_slides from './20260416_120000_ca
 import * as migration_20260418_100000_sindicalize_uploads from './20260418_100000_sindicalize_uploads';
 import * as migration_20260418_110000_acts_ccts from './20260418_110000_acts_ccts';
 import * as migration_20260420_120000_denuncias from './20260420_120000_denuncias';
+import * as migration_20260423_210000_fix_locked_docs_rels from './20260423_210000_fix_locked_docs_rels';
 
 export const migrations = [
   {
@@ -53,5 +54,10 @@ export const migrations = [
     up: migration_20260420_120000_denuncias.up,
     down: migration_20260420_120000_denuncias.down,
     name: '20260420_120000_denuncias',
+  },
+  {
+    up: migration_20260423_210000_fix_locked_docs_rels.up,
+    down: migration_20260423_210000_fix_locked_docs_rels.down,
+    name: '20260423_210000_fix_locked_docs_rels',
   },
 ];
