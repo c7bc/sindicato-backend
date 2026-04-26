@@ -1,29 +1,47 @@
 import { NextResponse } from 'next/server'
 import { put } from '@vercel/blob'
+import path from 'path'
 
 export async function GET() {
   const token = process.env.BLOB_READ_WRITE_TOKEN || ''
+  const filename = `plugin-sig-test-${Date.now()}.png`
+  const buffer = Buffer.from('iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAYAAAAfFcSJAAAADUlEQVR42mP8/5+hHgAHggJ/PchI7wAAAABJRU5ErkJggg==', 'base64')
+  const fileKey = path.posix.join('', filename)
 
-  // Test put via SDK with explicit token (same plugin would do)
-  let sdkOk: string | null = null
-  let sdkErr: string | null = null
+  const tries: any[] = []
+
+  // Test 1: EXACT plugin signature (no allowOverwrite)
   try {
-    const r = await put(`media/blob-debug-sdk-${Date.now()}.png`, Buffer.from('test'), {
+    const r = await put(fileKey, buffer, {
       access: 'public',
       addRandomSuffix: false,
-      allowOverwrite: true,
+      cacheControlMaxAge: 60 * 60 * 24 * 365,
       contentType: 'image/png',
       token,
     })
-    sdkOk = r.url
-  } catch (e) {
-    sdkErr = e instanceof Error ? `${e.constructor.name}: ${e.message}\n${e.stack?.slice(0,500)}` : String(e)
+    tries.push({ test: 'plugin-sig', ok: r.url })
+  } catch (e: any) {
+    tries.push({
+      test: 'plugin-sig',
+      err: `${e?.constructor?.name}: ${e?.message}`,
+      stack: e?.stack?.slice(0, 400),
+    })
   }
 
-  return NextResponse.json({
-    tokenLen: token.length,
-    tokenStart: token.slice(0, 30),
-    sdkOk,
-    sdkErr,
-  })
+  // Test 2: WITH allowOverwrite
+  try {
+    const r = await put(fileKey + '.allow', buffer, {
+      access: 'public',
+      addRandomSuffix: false,
+      allowOverwrite: true,
+      cacheControlMaxAge: 60 * 60 * 24 * 365,
+      contentType: 'image/png',
+      token,
+    })
+    tries.push({ test: 'with-allow-overwrite', ok: r.url })
+  } catch (e: any) {
+    tries.push({ test: 'with-allow-overwrite', err: e?.message })
+  }
+
+  return NextResponse.json({ tries })
 }
