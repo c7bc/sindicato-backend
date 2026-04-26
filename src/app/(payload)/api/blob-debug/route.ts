@@ -2,71 +2,62 @@ import { NextResponse } from 'next/server'
 import config from '@payload-config'
 import { getPayload } from 'payload'
 
+// In-memory log capture
+const logs: string[] = []
+let patched = false
+
 export async function GET() {
   const payload = await getPayload({ config })
-
-  // Inspect Media collection deeply
   const media = payload.collections['media']
-  const cfg = media?.config
+  const adapter = (media?.config?.upload as any)?.adapter
+  const hasAdapter = !!adapter
+  const adapterKeys = adapter ? Object.keys(adapter) : []
 
-  const handlers = (cfg?.upload as any)?.handlers
-  const handlerInfo = Array.isArray(handlers)
-    ? handlers.map((h: any, i: number) => ({
-        idx: i,
-        type: typeof h,
-        isNull: h === null,
-        isUndefined: h === undefined,
-        name: h?.name || null,
-      }))
-    : 'not array'
-
-  const beforeChange = cfg?.hooks?.beforeChange || []
-  const beforeChangeInfo = beforeChange.map((h: any, i: number) => ({
-    idx: i,
-    type: typeof h,
-    name: h?.name || h?.toString().slice(0, 100),
-  }))
-
-  // Try the staticHandler manually
-  let staticHandlerInfo: any = 'no handler'
-  try {
-    if (Array.isArray(handlers) && handlers.length > 0) {
-      const h = handlers[0]
-      staticHandlerInfo = {
-        type: typeof h,
-        callable: typeof h === 'function',
-        funcStr: typeof h === 'function' ? h.toString().slice(0, 300) : null,
+  // Patch handleUpload to log
+  if (!patched && adapter?.handleUpload) {
+    const orig = adapter.handleUpload.bind(adapter)
+    adapter.handleUpload = async (args: any) => {
+      logs.push(`handleUpload called: filename=${args?.file?.filename} mime=${args?.file?.mimeType}`)
+      try {
+        const r = await orig(args)
+        logs.push(`handleUpload returned ok`)
+        return r
+      } catch (e) {
+        logs.push(`handleUpload threw: ${e instanceof Error ? e.message : String(e)}`)
+        throw e
       }
     }
-  } catch (e) {
-    staticHandlerInfo = String(e)
+    patched = true
   }
 
-  // Capture any error during create with full stack
+  // Try create via SDK
   const png = Buffer.from('iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAYAAAAfFcSJAAAADUlEQVR42mP8/5+hHgAHggJ/PchI7wAAAABJRU5ErkJggg==', 'base64')
-  let createErr: any = null
+  let result: any = null
+  let err: string | null = null
+  const before = logs.length
   try {
-    await payload.create({
+    const doc = await payload.create({
       collection: 'media',
-      data: { alt: 'deep-debug' },
+      data: { alt: 'patched-debug' },
       file: {
         data: png,
         mimetype: 'image/png',
-        name: `deep-debug-${Date.now()}.png`,
+        name: `patched-debug-${Date.now()}.png`,
         size: png.length,
       },
     })
+    result = { id: doc.id, filename: doc.filename }
   } catch (e) {
-    createErr = {
-      msg: e instanceof Error ? e.message : String(e),
-      stack: e instanceof Error ? e.stack?.slice(0, 1000) : null,
-    }
+    err = e instanceof Error ? `${e.message}\n${e.stack?.slice(0, 400)}` : String(e)
   }
 
   return NextResponse.json({
-    handlerInfo,
-    beforeChangeInfo,
-    staticHandlerInfo,
-    createErr,
+    hasAdapter,
+    adapterKeys,
+    patched,
+    result,
+    err,
+    capturedLogs: logs.slice(before),
+    allLogsCount: logs.length,
   })
 }
