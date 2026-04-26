@@ -1,10 +1,36 @@
 import { NextResponse } from 'next/server'
 import config from '@payload-config'
 import { getPayload } from 'payload'
-import { getIncomingFiles } from '@payloadcms/plugin-cloud-storage/utilities'
 
 const logs: any[] = []
 let patched = false
+
+// Inline implementation matching @payloadcms/plugin-cloud-storage's getIncomingFiles
+function inlineGetIncomingFiles({ data, req }: any) {
+  const file = req.file
+  const files: any[] = []
+  if (file && data.filename && data.mimeType) {
+    files.push({
+      buffer: file.data,
+      filename: data.filename,
+      filesize: file.size,
+      mimeType: data.mimeType,
+    })
+    if (data?.sizes) {
+      Object.entries(data.sizes).forEach(([key, resizedFileData]: any) => {
+        if (req.payloadUploadSizes?.[key] && data.mimeType) {
+          files.push({
+            buffer: req.payloadUploadSizes[key],
+            filename: resizedFileData.filename,
+            filesize: req.payloadUploadSizes[key].length,
+            mimeType: data.mimeType,
+          })
+        }
+      })
+    }
+  }
+  return files
+}
 
 export async function GET() {
   const payload = await getPayload({ config })
@@ -15,12 +41,16 @@ export async function GET() {
     const beforeHooks = cfg?.hooks?.beforeChange || []
     const wrapped = beforeHooks.map((h: any) => {
       return async (args: any) => {
-        const filesIn = getIncomingFiles({ data: args.data, req: args.req })
+        const filesIn = inlineGetIncomingFiles({ data: args.data, req: args.req })
         logs.push({
           stage: 'pre-hook',
           filesIn_len: filesIn.length,
           file0_filename: filesIn[0]?.filename,
           file0_buffer_len: filesIn[0]?.buffer?.length,
+          file0_mime: filesIn[0]?.mimeType,
+          dataKeys: Object.keys(args.data || {}),
+          dataMimeType: args.data?.mimeType,
+          dataMimetype: args.data?.mimetype,
         })
         const r = await h(args)
         logs.push({ stage: 'post-hook' })
@@ -40,11 +70,11 @@ export async function GET() {
   try {
     const doc = await payload.create({
       collection: 'media',
-      data: { alt: 'getincoming-test' },
+      data: { alt: 'inline-test' },
       file: {
         data: png,
         mimetype: 'image/png',
-        name: `gif-${Date.now()}.png`,
+        name: `inline-${Date.now()}.png`,
         size: png.length,
       },
     })
