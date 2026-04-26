@@ -2,35 +2,32 @@ import { NextResponse } from 'next/server'
 import config from '@payload-config'
 import { getPayload } from 'payload'
 
-// In-memory log capture
-const logs: string[] = []
+const logs: any[] = []
 let patched = false
 
 export async function GET() {
   const payload = await getPayload({ config })
   const media = payload.collections['media']
-  const adapter = (media?.config?.upload as any)?.adapter
-  const hasAdapter = !!adapter
-  const adapterKeys = adapter ? Object.keys(adapter) : []
+  const cfg = media?.config
 
-  // Patch handleUpload to log
-  if (!patched && adapter?.handleUpload) {
-    const orig = adapter.handleUpload.bind(adapter)
-    adapter.handleUpload = async (args: any) => {
-      logs.push(`handleUpload called: filename=${args?.file?.filename} mime=${args?.file?.mimeType}`)
-      try {
-        const r = await orig(args)
-        logs.push(`handleUpload returned ok`)
-        return r
-      } catch (e) {
-        logs.push(`handleUpload threw: ${e instanceof Error ? e.message : String(e)}`)
-        throw e
-      }
+  // Inject a beforeChange hook that logs req.file and data, and ALSO inject as FIRST hook
+  if (!patched) {
+    const probe = async ({ data, req }: any) => {
+      logs.push({
+        when: 'beforeChange-probe',
+        hasReqFile: !!req?.file,
+        reqFileKeys: req?.file ? Object.keys(req.file) : null,
+        dataFilename: data?.filename,
+        dataMimeType: data?.mimeType,
+      })
+      return data
+    }
+    if (cfg?.hooks) {
+      cfg.hooks.beforeChange = [probe, ...(cfg.hooks.beforeChange || [])]
     }
     patched = true
   }
 
-  // Try create via SDK
   const png = Buffer.from('iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAYAAAAfFcSJAAAADUlEQVR42mP8/5+hHgAHggJ/PchI7wAAAABJRU5ErkJggg==', 'base64')
   let result: any = null
   let err: string | null = null
@@ -38,26 +35,30 @@ export async function GET() {
   try {
     const doc = await payload.create({
       collection: 'media',
-      data: { alt: 'patched-debug' },
+      data: { alt: 'probe-create' },
       file: {
         data: png,
         mimetype: 'image/png',
-        name: `patched-debug-${Date.now()}.png`,
+        name: `probe-${Date.now()}.png`,
         size: png.length,
       },
     })
-    result = { id: doc.id, filename: doc.filename }
+    result = { id: doc.id, filename: doc.filename, url: doc.url }
+
+    // Check if in blob
+    if (doc.filename) {
+      const r = await fetch(`https://t5nhsatjphczs4ej.public.blob.vercel-storage.com/media/${encodeURIComponent(doc.filename)}`)
+      logs.push({ when: 'after-create-blob-check', status: r.status })
+    }
   } catch (e) {
     err = e instanceof Error ? `${e.message}\n${e.stack?.slice(0, 400)}` : String(e)
   }
 
   return NextResponse.json({
-    hasAdapter,
-    adapterKeys,
     patched,
     result,
     err,
     capturedLogs: logs.slice(before),
-    allLogsCount: logs.length,
+    totalLogs: logs.length,
   })
 }
