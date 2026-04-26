@@ -1,6 +1,7 @@
 import { NextResponse } from 'next/server'
 import config from '@payload-config'
 import { getPayload } from 'payload'
+import { getIncomingFiles } from '@payloadcms/plugin-cloud-storage/utilities'
 
 const logs: any[] = []
 let patched = false
@@ -12,18 +13,18 @@ export async function GET() {
 
   if (!patched) {
     const beforeHooks = cfg?.hooks?.beforeChange || []
-    // Wrap each existing beforeChange hook to log
-    const wrapped = beforeHooks.map((h: any, i: number) => {
+    const wrapped = beforeHooks.map((h: any) => {
       return async (args: any) => {
-        logs.push({ stage: `before-h${i}`, hasFile: !!args?.req?.file, dataFilename: args?.data?.filename })
-        try {
-          const r = await h(args)
-          logs.push({ stage: `after-h${i}`, ok: true })
-          return r
-        } catch (e) {
-          logs.push({ stage: `after-h${i}`, err: e instanceof Error ? e.message : String(e), stack: e instanceof Error ? e.stack?.slice(0, 300) : null })
-          throw e
-        }
+        const filesIn = getIncomingFiles({ data: args.data, req: args.req })
+        logs.push({
+          stage: 'pre-hook',
+          filesIn_len: filesIn.length,
+          file0_filename: filesIn[0]?.filename,
+          file0_buffer_len: filesIn[0]?.buffer?.length,
+        })
+        const r = await h(args)
+        logs.push({ stage: 'post-hook' })
+        return r
       }
     })
     if (cfg?.hooks) {
@@ -39,11 +40,11 @@ export async function GET() {
   try {
     const doc = await payload.create({
       collection: 'media',
-      data: { alt: 'wrap-test' },
+      data: { alt: 'getincoming-test' },
       file: {
         data: png,
         mimetype: 'image/png',
-        name: `wrap-${Date.now()}.png`,
+        name: `gif-${Date.now()}.png`,
         size: png.length,
       },
     })
