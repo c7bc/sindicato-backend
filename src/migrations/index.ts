@@ -8,6 +8,7 @@ import * as migration_20260418_100000_sindicalize_uploads from './20260418_10000
 import * as migration_20260418_110000_acts_ccts from './20260418_110000_acts_ccts';
 import * as migration_20260420_120000_denuncias from './20260420_120000_denuncias';
 import * as migration_20260423_210000_fix_locked_docs_rels from './20260423_210000_fix_locked_docs_rels';
+import * as migration_20260426_010000_media_prefix from './20260426_010000_media_prefix';
 
 export const migrations = [
   {
@@ -59,5 +60,10 @@ export const migrations = [
     up: migration_20260423_210000_fix_locked_docs_rels.up,
     down: migration_20260423_210000_fix_locked_docs_rels.down,
     name: '20260423_210000_fix_locked_docs_rels',
+  },
+  {
+    up: migration_20260426_010000_media_prefix.up,
+    down: migration_20260426_010000_media_prefix.down,
+    name: '20260426_010000_media_prefix',
   },
 ];
