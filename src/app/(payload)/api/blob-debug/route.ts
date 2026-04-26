@@ -1,91 +1,29 @@
 import { NextResponse } from 'next/server'
-import config from '@payload-config'
-import { getPayload } from 'payload'
-
-const logs: any[] = []
-let patched = false
-
-// Inline implementation matching @payloadcms/plugin-cloud-storage's getIncomingFiles
-function inlineGetIncomingFiles({ data, req }: any) {
-  const file = req.file
-  const files: any[] = []
-  if (file && data.filename && data.mimeType) {
-    files.push({
-      buffer: file.data,
-      filename: data.filename,
-      filesize: file.size,
-      mimeType: data.mimeType,
-    })
-    if (data?.sizes) {
-      Object.entries(data.sizes).forEach(([key, resizedFileData]: any) => {
-        if (req.payloadUploadSizes?.[key] && data.mimeType) {
-          files.push({
-            buffer: req.payloadUploadSizes[key],
-            filename: resizedFileData.filename,
-            filesize: req.payloadUploadSizes[key].length,
-            mimeType: data.mimeType,
-          })
-        }
-      })
-    }
-  }
-  return files
-}
+import { put } from '@vercel/blob'
 
 export async function GET() {
-  const payload = await getPayload({ config })
-  const media = payload.collections['media']
-  const cfg = media?.config
+  const token = process.env.BLOB_READ_WRITE_TOKEN || ''
 
-  if (!patched) {
-    const beforeHooks = cfg?.hooks?.beforeChange || []
-    const wrapped = beforeHooks.map((h: any) => {
-      return async (args: any) => {
-        const filesIn = inlineGetIncomingFiles({ data: args.data, req: args.req })
-        logs.push({
-          stage: 'pre-hook',
-          filesIn_len: filesIn.length,
-          file0_filename: filesIn[0]?.filename,
-          file0_buffer_len: filesIn[0]?.buffer?.length,
-          file0_mime: filesIn[0]?.mimeType,
-          dataKeys: Object.keys(args.data || {}),
-          dataMimeType: args.data?.mimeType,
-          dataMimetype: args.data?.mimetype,
-        })
-        const r = await h(args)
-        logs.push({ stage: 'post-hook' })
-        return r
-      }
-    })
-    if (cfg?.hooks) {
-      cfg.hooks.beforeChange = wrapped
-    }
-    patched = true
-  }
-
-  const png = Buffer.from('iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAYAAAAfFcSJAAAADUlEQVR42mP8/5+hHgAHggJ/PchI7wAAAABJRU5ErkJggg==', 'base64')
-  let result: any = null
-  let err: any = null
-  const before = logs.length
+  // Test put via SDK with explicit token (same plugin would do)
+  let sdkOk: string | null = null
+  let sdkErr: string | null = null
   try {
-    const doc = await payload.create({
-      collection: 'media',
-      data: { alt: 'inline-test' },
-      file: {
-        data: png,
-        mimetype: 'image/png',
-        name: `inline-${Date.now()}.png`,
-        size: png.length,
-      },
+    const r = await put(`media/blob-debug-sdk-${Date.now()}.png`, Buffer.from('test'), {
+      access: 'public',
+      addRandomSuffix: false,
+      allowOverwrite: true,
+      contentType: 'image/png',
+      token,
     })
-    result = { id: doc.id, filename: doc.filename }
-    if (doc.filename) {
-      const r = await fetch(`https://t5nhsatjphczs4ej.public.blob.vercel-storage.com/media/${encodeURIComponent(doc.filename)}`)
-      logs.push({ stage: 'blob-check', status: r.status })
-    }
+    sdkOk = r.url
   } catch (e) {
-    err = e instanceof Error ? { msg: e.message, stack: e.stack?.slice(0, 600) } : String(e)
+    sdkErr = e instanceof Error ? `${e.constructor.name}: ${e.message}\n${e.stack?.slice(0,500)}` : String(e)
   }
 
-  return NextResponse.json({ patched, result, err, capturedLogs: logs.slice(before) })
+  return NextResponse.json({
+    tokenLen: token.length,
+    tokenStart: token.slice(0, 30),
+    sdkOk,
+    sdkErr,
+  })
 }
